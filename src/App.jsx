@@ -40,8 +40,8 @@ export default function App() {
       setLoading(false);
       return;
     }
-    const bibleUrl = `/assets/Bible/${found.start}To${found.end}-BibleEvents.json`;
-    const worldUrl = `/assets/World/${found.start}To${found.end}-WorldEvents.json`;
+    const bibleUrl = `${import.meta.env.BASE_URL}assets/Bible/${found.start}To${found.end}-BibleEvents.json`;
+    const worldUrl = `${import.meta.env.BASE_URL}assets/World/${found.start}To${found.end}-WorldEvents.json`;
     //setNotif(`Loading files: ${bibleUrl}, ${worldUrl}`);
     setLoading(true);
     console.log(`Trying to fetch Bible events from: ${bibleUrl}`);
