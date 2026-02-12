@@ -1,0 +1,203 @@
+/* Event Notifications Container */
+.event-notifications-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 10000;
+  pointer-events: none;
+  /* No width/height constraints - let children position themselves */
+}
+
+/* Individual Notification Card */
+.event-notification {
+  position: fixed;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 250, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 0;
+  padding: 6px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 3px solid #0078ff;
+  width: 340px;
+  transition: all 300ms ease-out;
+  pointer-events: auto;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+.event-notification.biblical {
+  border-left-color: #0078ff;
+}
+
+.event-notification.world {
+  border-left-color: #ff8800;
+}
+
+/* Fade In Animation */
+@keyframes fade-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.event-notification.fade-in {
+  animation: fade-in-from-right 400ms ease-out forwards;
+}
+
+/* Fade Out Animation */
+@keyframes fade-out-to-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+.event-notification.fade-out {
+  animation: fade-out-to-right 1000ms ease-in forwards;
+}
+
+/* Notification Header */
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  align-items: flex-start;
+}
+
+.event-type-badge {
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.notification-header .event-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  line-height: 1.2;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+
+/* Notification Body */
+.notification-body {
+  margin-bottom: 8px;
+}
+
+.event-description {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* Notification Footer */
+.notification-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.event-period {
+  font-weight: 600;
+  color: #0078ff;
+}
+
+/* Progress Bar */
+.notification-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 120, 255, 0.2);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0078ff, #00d4ff);
+  border-radius: 3px;
+}
+
+@keyframes progress-bar-fill {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+  .event-notification {
+    width: 320px;
+    min-height: 120px;
+    max-height: 160px;
+    padding: 12px 14px;
+  }
+
+  .notification-header .event-title {
+    font-size: 0.9rem;
+  }
+
+  .event-description {
+    font-size: 0.8rem;
+    line-clamp: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-notification {
+    width: 280px;
+    min-height: 110px;
+    max-height: 150px;
+    padding: 10px 12px;
+    right: 16px !important;
+  }
+
+  .notification-header {
+    gap: 6px;
+  }
+
+  .event-type-badge {
+    font-size: 1rem;
+  }
+
+  .notification-header .event-title {
+    font-size: 0.85rem;
+  }
+
+  .event-description {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    line-clamp: 2;
+  }
+
+  .event-period {
+    font-size: 0.75rem;
+  }
+}

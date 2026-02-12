@@ -1,0 +1,161 @@
+/* Timeline Controls */
+.timeline-controls {
+  margin-bottom: 24px;
+}
+
+.timeline-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 12px;
+}
+
+/* Year Label */
+.year-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Language Toggle Button */
+.lang-toggle {
+  padding: 8px 16px;
+  background: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.lang-toggle:hover {
+  background: #0052cc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.3);
+}
+
+.lang-toggle:active {
+  transform: translateY(0);
+}
+
+/* Slider Container */
+.slider-container {
+  position: relative;
+  margin-top: 0;
+}
+
+/* Year Slider */
+.year-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.year-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0078ff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.4);
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.year-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.6);
+}
+
+.year-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0078ff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.4);
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.year-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.6);
+}
+
+/* Timeline Tick Marks */
+.timeline-tick {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #333;
+}
+
+.timeline-tick-line {
+  height: 6px;
+  width: 1px;
+  background: #666;
+  margin-bottom: 13px;
+  margin-top: -5px;
+}
+
+/* Timeline Year Indicator Label */
+.timeline-tick-label {
+  font-size: 8px;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.timeline-tick-label:hover {
+  background: #0078ff;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 120, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .timeline-controls-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .year-label {
+    font-size: 14px;
+  }
+
+  .lang-toggle {
+    align-self: flex-end;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .year-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .year-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}
