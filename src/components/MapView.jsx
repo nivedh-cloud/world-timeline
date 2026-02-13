@@ -360,7 +360,25 @@ function MapViewComponent({
         return container;
       };
       zoomToWorldButton.addTo(map);
-      return () => zoomToWorldButton.remove();
+
+      // Add credit control
+      const creditControl = L.control({ position: 'bottomleft' });
+      creditControl.onAdd = () => {
+        const container = L.DomUtil.create('div', '');
+        container.innerHTML = `
+          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 12px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+            Designed and developed by <strong>Jeevan Prabhath Pendem</strong>
+          </div>
+        `;
+        L.DomEvent.disableClickPropagation(container);
+        return container;
+      };
+      creditControl.addTo(map);
+
+      return () => {
+        zoomToWorldButton.remove();
+        creditControl.remove();
+      };
     }, [map]);
 
     useMapEvents({
