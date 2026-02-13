@@ -5,15 +5,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/ClusterOverlay.css";
 
-const blueCircle = new L.DivIcon({
-  html: '<div style="background:#0078ff;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0002;"></div>',
-  className: '',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-  popupAnchor: [0, -8]
-});
-const orangeCircle = new L.DivIcon({
-  html: '<div style="background:#ff8800;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0002;"></div>',
+const singleColorCircle = new L.DivIcon({
+  html: '<div style="background:#4f46e5;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0002;"></div>',
   className: '',
   iconSize: [16, 16],
   iconAnchor: [8, 8],
@@ -93,23 +86,14 @@ const getLocationName = (lat, lng, language = 'en') => {
 
 // Memoized cluster icon creation function to prevent re-renders
 const clusterIconCreateFunction = (cluster) => {
-  const markers = cluster.getAllChildMarkers();
-  let blue = 0, orange = 0;
-  markers.forEach(m => {
-    if (m.options.icon && m.options.icon.options && m.options.icon.options.html) {
-      if (m.options.icon.options.html.includes('#0078ff')) blue++;
-      else if (m.options.icon.options.html.includes('#ff8800')) orange++;
-    }
-  });
-  const color = blue >= orange ? '#0078ff' : '#ff8800';
   return L.divIcon({
     className: 'marker-cluster-custom',
-    html: `<div style="background:${color}CC;width:32px;height:32px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;font-size:15px;box-shadow:0 1px 8px #0002;opacity:0.85;">${cluster.getChildCount()}</div>`
+    html: `<div style="background:#4f46e5CC;width:32px;height:32px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;font-size:15px;box-shadow:0 1px 8px #0002;opacity:0.85;">${cluster.getChildCount()}</div>`
   });
 };
 
 // Memoized EventMarker component with hover and click handlers
-const EventMarker = React.memo(({ event, language, blueIcon, orangeIcon, onMarkerHover, onMarkerClick, mapRef }) => {
+const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick, mapRef }) => {
   const markerRef = React.useRef(null);
 
   const handleMouseOver = () => {
@@ -134,7 +118,7 @@ const EventMarker = React.memo(({ event, language, blueIcon, orangeIcon, onMarke
     <Marker
       ref={markerRef}
       position={[event.lat, event.lon]}
-      icon={event.type === "biblical" ? blueIcon : orangeIcon}
+      icon={singleColorCircle}
       options={{ eventData: event }}
       eventHandlers={{
         mouseover: handleMouseOver,
@@ -410,7 +394,7 @@ function MapViewComponent({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {polygonCoords && hoveredCluster && (
-        <Polygon key={`poly-${hoveredCluster.latlng.lat}-${hoveredCluster.latlng.lng}`} positions={polygonCoords} pathOptions={{ color: '#0078ff', weight: 2, fillOpacity: 0.1 }} />
+        <Polygon key={`poly-${hoveredCluster.latlng.lat}-${hoveredCluster.latlng.lng}`} positions={polygonCoords} pathOptions={{ color: '#4f46e5', weight: 2, fillOpacity: 0.1 }} />
       )}
       <MarkerClusterGroup
         ref={handleClusterRef}
@@ -424,8 +408,6 @@ function MapViewComponent({
             key={ev.key}
             event={ev}
             language={language}
-            blueIcon={blueCircle}
-            orangeIcon={orangeCircle}
             onMarkerHover={(data) => {
               if (data) {
                 setHoveredMarker(data);

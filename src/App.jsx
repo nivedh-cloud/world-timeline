@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import TimelineControls from "./components/TimelineControls";
 import MapView from "./components/MapView";
-import Legend from "./components/Legend";
 import EventNotifications from "./components/EventNotifications";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,8 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 export default function App() {
   // State
   const [currentYear, setCurrentYear] = useState(0);
-  const [showBiblical, setShowBiblical] = useState(true);
-  const [showWorld, setShowWorld] = useState(true);
   const [language, setLanguage] = useState("en");
   const [notif, setNotif] = useState("");
 
@@ -142,33 +139,22 @@ export default function App() {
       console.log(`Event: ${ev.name_en || ev.name} (${s} to ${e}) - match: ${match}`);
       return match;
     };
-    if (showBiblical) {
-      events = events.concat(
-        eventData.BIBLICAL_EVENTS
-          .filter(filterByRange)
-          .map((ev, idx) => ({ ...ev, type: "biblical", key: `b-${ev.name_en}-${ev.startYear}-${idx}` }))
-      );
-    }
-    if (showWorld) {
-      events = events.concat(
-        eventData.WORLD_EVENTS
-          .filter(filterByRange)
-          .map((ev, idx) => ({ ...ev, type: "world", key: `w-${ev.name_en}-${ev.startYear}-${idx}` }))
-      );
-    }
+    // Combine all events regardless of type
+    events = events.concat(
+      eventData.BIBLICAL_EVENTS
+        .filter(filterByRange)
+        .map((ev, idx) => ({ ...ev, type: "biblical", key: `b-${ev.name_en}-${ev.startYear}-${idx}` }))
+    );
+    events = events.concat(
+      eventData.WORLD_EVENTS
+        .filter(filterByRange)
+        .map((ev, idx) => ({ ...ev, type: "world", key: `w-${ev.name_en}-${ev.startYear}-${idx}` }))
+    );
     return events;
-  }, [rangeStart, rangeEnd, showBiblical, showWorld, eventData]);
+  }, [rangeStart, rangeEnd, eventData]);
 
   // Handlers
   const handleYearChange = year => setCurrentYear(year);
-  const handleToggleBiblical = () => {
-    setShowBiblical(v => !v);
-    setCurrentYear(0);
-  };
-  const handleToggleWorld = () => {
-    setShowWorld(v => !v);
-    setCurrentYear(0);
-  };
   const handleLanguageToggle = () => {
     setLanguage(l => (l === "en" ? "te" : "en"));
     setCurrentYear(0);
@@ -229,12 +215,6 @@ export default function App() {
           onYearChange={handleYearChange}
           language={language}
           onLanguageToggle={handleLanguageToggle}
-        />
-        <Legend
-          showBiblical={showBiblical}
-          showWorld={showWorld}
-          onToggleBiblical={handleToggleBiblical}
-          onToggleWorld={handleToggleWorld}
         />
         <MapView events={filteredEvents} language={language} />
       </div>
