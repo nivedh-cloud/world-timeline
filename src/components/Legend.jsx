@@ -10,7 +10,7 @@ export default function Legend({
     <div className="legend-box">
       <label className="legend-row">
         <span className="legend-circle biblical"></span>
-        <span>Biblical Events</span>
+        <span>Middle East Events</span>
         <input type="checkbox" checked={showBiblical} onChange={onToggleBiblical} style={{marginLeft:8}} />
       </label>
       <label className="legend-row">
