@@ -368,7 +368,7 @@ function MapViewComponent({
         const container = L.DomUtil.create('div', '');
         container.innerHTML = `
           <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 12px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
-            Designed and developed by <strong>Jeevan Prabhath Pendem</strong>
+            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> Designed and developed by <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath Pendem</span>
           </div>
         `;
         L.DomEvent.disableClickPropagation(container);
@@ -382,10 +382,21 @@ function MapViewComponent({
           creditDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
           creditDiv.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
         };
-        creditDiv.onclick = (e) => {
-          e.stopPropagation();
-          setShowAboutModal(true);
-        };
+        // Add click handlers for title and author
+        const titleSpan = creditDiv.querySelector('#wt-credit-title');
+        const authorSpan = creditDiv.querySelector('#wt-credit-author');
+        if (titleSpan) {
+          titleSpan.onclick = (e) => {
+            e.stopPropagation();
+            setShowAboutModal(true);
+          };
+        }
+        if (authorSpan) {
+          authorSpan.onclick = (e) => {
+            e.stopPropagation();
+            window.open('https://nivedh-cloud.github.io/jeevan-resume/', '_blank', 'noopener');
+          };
+        }
         return container;
       };
       creditControl.addTo(map);
@@ -629,7 +640,15 @@ function MapViewComponent({
 
               {/* Footer */}
               <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: 14, color: '#9ca3af' }}>
-                Designed and developed by <strong style={{ color: '#4f46e5' }}>Jeevan Prabhath Pendem</strong>
+                <span style={{ fontWeight: 600, color: '#222', cursor: 'pointer' }} onClick={() => setShowAboutModal(true)}>
+                  World Timeline
+                </span>
+                {' '}Designed and developed by{' '}
+                <span style={{ color: '#4f46e5', fontWeight: 600, cursor: 'pointer' }}
+                  onClick={() => window.open('https://nivedh-cloud.github.io/jeevan-resume/', '_blank', 'noopener')}
+                >
+                  Jeevan Prabhath Pendem
+                </span>
               </div>
             </div>
           </div>
