@@ -148,6 +148,7 @@ function MapViewComponent({
   const [overlayPosition, setOverlayPosition] = React.useState({ x: 0, y: 0 });
   const [overlayLocationName, setOverlayLocationName] = React.useState('');
   const [zoomTarget, setZoomTarget] = React.useState(null); // { lat, lng, zoom }
+  const [showAboutModal, setShowAboutModal] = React.useState(false); // About/Credit modal
   
   // Refs for map persistence
   const defaultCenter = [20, 0];
@@ -366,11 +367,25 @@ function MapViewComponent({
       creditControl.onAdd = () => {
         const container = L.DomUtil.create('div', '');
         container.innerHTML = `
-          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 12px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 12px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
             Designed and developed by <strong>Jeevan Prabhath Pendem</strong>
           </div>
         `;
         L.DomEvent.disableClickPropagation(container);
+        const creditDiv = container.querySelector('div');
+        creditDiv.style.cursor = 'pointer';
+        creditDiv.onmouseover = () => {
+          creditDiv.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+          creditDiv.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+        };
+        creditDiv.onmouseout = () => {
+          creditDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+          creditDiv.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+        };
+        creditDiv.onclick = (e) => {
+          e.stopPropagation();
+          setShowAboutModal(true);
+        };
         return container;
       };
       creditControl.addTo(map);
@@ -510,7 +525,116 @@ function MapViewComponent({
           </div>
         </div>
       )}
-      
+
+      {/* About/Credit Modal */}
+      {showAboutModal && (
+        <>
+          <style>
+            {`
+              @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+              }
+              @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+              }
+            `}
+          </style>
+          {/* Transparent Overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: 'fadeIn 0.3s ease'
+            }}
+            onClick={() => setShowAboutModal(false)}
+          >
+            {/* Modal Content */}
+            <div
+              style={{
+                backgroundColor: '#fff',
+                borderRadius: 12,
+                padding: 32,
+                maxWidth: 700,
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                animation: 'slideUp 0.3s ease',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                zIndex: 10000
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#1f2937' }}>About This Project</h2>
+                <button
+                  onClick={() => setShowAboutModal(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: 28,
+                    cursor: 'pointer',
+                    color: '#9ca3af',
+                    padding: 0,
+                    width: 32,
+                    height: 32,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Description Option 2 */}
+              <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#374151', marginBottom: 12 }}>Project Overview</h3>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: '#4b5563', margin: 0 }}>
+                  <strong>World Timeline</strong> — An interactive web application that visualizes historical events across multiple time periods and geographic regions. Built with React and Vite, the application renders 4000+ events (World history) on an interactive Leaflet map with advanced features including marker clustering, geolocation detection, and event notifications. Implemented responsive design using TailwindCSS and created a multilingual interface supporting English and Telugu. The application uses efficient JSON-based data loading with 100-year interval segmentation and includes features such as year-based timeline controls, real-time event filtering, zoom functionality, and visual event clustering. Deployed on GitHub Pages with automated CI/CD pipeline using GitHub Actions.
+                </p>
+              </div>
+
+              {/* Description Option 4 */}
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#374151', marginBottom: 12 }}>Technical Stack</h3>
+                <div style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.8 }}>
+                  <div style={{ marginBottom: 8 }}>
+                    <strong>Frontend:</strong> React 19, Vite 7, TailwindCSS 4, React Leaflet 5
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <strong>Features:</strong> Interactive mapping with marker clustering, real-time event filtering, timeline controls, multilingual interface
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <strong>Data:</strong> 4000+ events organized in JSON format with geospatial coordinates
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <strong>DevOps:</strong> Automated CI/CD with GitHub Actions, GitHub Pages deployment
+                  </div>
+                  <div>
+                    <strong>Key Accomplishments:</strong> Optimized performance with event data lazy loading, implemented custom UI components for event management and visualization, created responsive design for cross-device compatibility
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: 14, color: '#9ca3af' }}>
+                Designed and developed by <strong style={{ color: '#4f46e5' }}>Jeevan Prabhath Pendem</strong>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
