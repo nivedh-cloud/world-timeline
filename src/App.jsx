@@ -159,15 +159,6 @@ export default function App() {
     return events;
   }, [rangeStart, rangeEnd, eventData]);
 
-  // Debug: Log which events are being displayed
-  React.useEffect(() => {
-    console.log('=== FILTERED EVENTS ===');
-    filteredEvents.forEach((ev, idx) => {
-      console.log(`[${idx}] ${ev.name_en} (${ev.type}) - Lat:${ev.lat}, Lon:${ev.lon}, Start:${ev.startYear}`);
-    });
-    console.log('Total:', filteredEvents.length);
-  }, [filteredEvents]);
-
   // Handlers
   const handleYearChange = year => setCurrentYear(year);
   const handleLanguageToggle = () => {
@@ -222,7 +213,7 @@ export default function App() {
               padding: '16px 12px',
               marginBottom: '0px',
               width: '100%',
-              backgroundColor:"#ffffff",
+              backgroundColor:"#bfb9e8",
               flexShrink: 0
             }}>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
