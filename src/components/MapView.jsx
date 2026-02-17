@@ -438,8 +438,8 @@ function MapViewComponent({
       creditControl.onAdd = () => {
         const container = L.DomUtil.create('div', '');
         container.innerHTML = `
-          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 12px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
-            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> Designed and developed by <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath Pendem</span>
+          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 10px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
+            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> Designed and developed by <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath</span>
           </div>
         `;
         L.DomEvent.disableClickPropagation(container);
@@ -716,7 +716,7 @@ function MapViewComponent({
               </div>
 
               {/* Footer */}
-              <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: 14, color: '#9ca3af' }}>
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: 10, color: '#9ca3af' }}>
                 <span style={{ fontWeight: 600, color: '#222', cursor: 'pointer' }} onClick={() => setShowAboutModal(true)}>
                   World Timeline
                 </span>
@@ -724,7 +724,7 @@ function MapViewComponent({
                 <span style={{ color: '#4f46e5', fontWeight: 600, cursor: 'pointer' }}
                   onClick={() => window.open('https://nivedh-cloud.github.io/jeevan-resume/', '_blank', 'noopener')}
                 >
-                  Jeevan Prabhath Pendem
+                  Jeevan Prabhath
                 </span>
               </div>
             </div>

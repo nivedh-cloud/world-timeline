@@ -44,6 +44,7 @@
   outline: none;
   cursor: pointer;
   position: relative;
+  margin-left: -20px;
   z-index: 10;
 }
 
@@ -114,7 +115,7 @@
 
 /* Timeline Year Indicator Label - Vertical */
 .timeline-tick-label-vertical {
-  font-size: 6px;
+  font-size: 8px;
   font-weight: 500;
   color: #555;
   cursor: pointer;
@@ -124,6 +125,7 @@
   user-select: none;
   white-space: nowrap;
   background: transparent;
+  margin-left: 9px;
 }
 
 .timeline-tick-label-vertical:hover {

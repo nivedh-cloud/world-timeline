@@ -268,7 +268,7 @@ export default function App() {
               
               {/* Timeline on the right */}
               <div style={{ 
-                width: '80px', 
+                width: '40px', 
                 flexShrink: 0,
                 minHeight: 0,
                 overflowY: 'hidden',
