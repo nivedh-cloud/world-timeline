@@ -98,12 +98,9 @@ const clusterIconCreateFunction = (cluster) => {
   childMarkers.forEach((marker, idx) => {
     // Try multiple ways to access the event type
     const eventType = marker._eventType || marker.options?.eventType || marker.options?.eventData?.type;
-    console.log(`Marker ${idx}:`, {_eventType: marker._eventType, eventType, marker});
     if (eventType === 'biblical') biblicalCount++;
     else if (eventType === 'world') worldCount++;
   });
-  
-  console.log('Cluster color determination:', {biblicalCount, worldCount, totalMarkers: childMarkers.length});
   
   // Determine color based on dominant event type
   const color = biblicalCount > worldCount ? '#7c3aedCC' : '#ff8800CC'; // Purple for biblical, Orange for world
@@ -122,9 +119,33 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
     // Attach event type directly to the Leaflet marker instance for cluster detection
     if (markerRef.current) {
       const marker = markerRef.current.leafletElement || markerRef.current;
-      marker._eventType = event.type;
-      marker._event = event;
-      console.log('Attaching event type to marker:', event.type, marker);
+      
+      if (marker) {
+        marker._eventType = event.type;
+        marker._event = event;
+        
+        // Manually attach click handler to open popup
+        const handleClick = () => {
+          console.log('[Marker Click] Event:', event.name_en);
+          if (marker && typeof marker.openPopup === 'function') {
+            marker.openPopup();
+            console.log('[Marker Click] Popup opened for:', event.name_en);
+          } else {
+            console.warn('[Marker Click] Could not open popup for:', event.name_en, 'marker=', !!marker, 'openPopup=', typeof marker?.openPopup);
+          }
+        };
+        
+        marker.on('click', handleClick);
+        console.log('[EventMarker] Click handler attached for:', event.name_en);
+        
+        return () => {
+          marker.off('click', handleClick);
+        };
+      } else {
+        console.warn('[EventMarker] Marker instance not available for:', event.name_en);
+      }
+    } else {
+      console.warn('[EventMarker] markerRef.current is null for:', event.name_en);
     }
   }, [event]);
 
@@ -174,7 +195,7 @@ function MapViewComponent({
   const [hoveredMarker, setHoveredMarker] = React.useState(null); // { event, position }
   const [overlayPosition, setOverlayPosition] = React.useState({ x: 0, y: 0 });
   const [overlayLocationName, setOverlayLocationName] = React.useState('');
-  const [zoomTarget, setZoomTarget] = React.useState(null); // { lat, lng, zoom }
+  const [zoomTarget, setZoomTarget] = React.useState(null); // { lat, lng, zoom } OR { bounds: [[lat,lng]...] }
   const [showAboutModal, setShowAboutModal] = React.useState(false); // About/Credit modal
   
   // Refs for map persistence
@@ -354,29 +375,73 @@ function MapViewComponent({
 
   // Handle zoom when zoomTarget is set
   React.useEffect(() => {
-    console.log('Zoom effect triggered, zoomTarget:', zoomTarget);
-    if (zoomTarget && mapRef.current) {
-      console.log('Zooming to:', zoomTarget);
-      // Set restoring flag so moveend doesn't interfere
+    console.log('🟢 [ZoomEffect] Triggered with zoomTarget:', zoomTarget);
+    if (!zoomTarget) {
+      console.log('🟡 [ZoomEffect] No zoomTarget, skipping');
+      return;
+    }
+    
+    console.log('🟢 [ZoomEffect] Processing zoomTarget');
+    
+    // Small delay to ensure map is ready
+    const timer = setTimeout(() => {
+      if (!mapRef.current) {
+        console.log('❌ [ZoomEffect] mapRef.current is still null after delay!');
+        return;
+      }
+      
+      console.log('🟢 [ZoomEffect] mapRef.current exists, proceeding');
       isRestoringRef.current = true;
+      
       try {
-        mapRef.current.setView([zoomTarget.lat, zoomTarget.lng], zoomTarget.zoom, { 
-          animate: true, 
-          duration: 0.5 
-        });
-        console.log('View set successfully');
-        // Allow moveend saves again after zoom animation completes
-        setTimeout(() => {
-          isRestoringRef.current = false;
-          console.log('Zoom complete, allowing position saves again');
-        }, 600);
+        // Check if zoomTarget is a bounds (array) or single point
+        if (zoomTarget.bounds && Array.isArray(zoomTarget.bounds)) {
+          console.log('🟡 [ZoomEffect] BOUNDS mode - bounds:', zoomTarget.bounds);
+          
+          // Zoom to fit bounds (cluster zoom)
+          console.log('🟡 [ZoomEffect] Calling fitBounds...');
+          const bounds = L.latLngBounds(zoomTarget.bounds);
+          console.log('🟡 [ZoomEffect] LatLngBounds created:', bounds);
+          
+          mapRef.current.fitBounds(bounds, { 
+            padding: [50, 50],
+            animate: true,
+            duration: 0.5
+          });
+          console.log('✅ [ZoomEffect] fitBounds called');
+          
+          // Set flag to allow moves again after animation
+          setTimeout(() => {
+            isRestoringRef.current = false;
+            console.log('✅ [ZoomEffect] Animation complete');
+          }, 600);
+          
+        } else if (zoomTarget.lat !== undefined) {
+          console.log('🟡 [ZoomEffect] POINT mode:', zoomTarget.lat, zoomTarget.lng, 'zoom:', zoomTarget.zoom);
+          
+          // Zoom to single point
+          mapRef.current.setView([zoomTarget.lat, zoomTarget.lng], zoomTarget.zoom, { 
+            animate: true, 
+            duration: 0.5 
+          });
+          console.log('✅ [ZoomEffect] setView called');
+          
+          setTimeout(() => {
+            isRestoringRef.current = false;
+          }, 600);
+        } else {
+          console.log('❌ [ZoomEffect] Invalid zoomTarget:', zoomTarget);
+        }
       } catch (err) {
-        console.error('Error setting view:', err);
+        console.error('❌ [ZoomEffect] Error:', err);
         isRestoringRef.current = false;
       }
+      
       setZoomTarget(null);
       setTimeout(() => setHoveredCluster(null), 500);
-    }
+    }, 50);
+    
+    return () => clearTimeout(timer);
   }, [zoomTarget]);
 
   function MapEventHandler() {
@@ -515,8 +580,10 @@ function MapViewComponent({
         ref={handleClusterRef}
         chunkedLoading
         showCoverageOnHover={false}
-        maxClusterRadius={40}
+        maxClusterRadius={80}
+        disableClusteringAtZoom={7}
         iconCreateFunction={clusterIconCreateFunction}
+        zoomToBoundsOnClick={false}
       >
         {events.map(ev => (
           <EventMarker
@@ -586,13 +653,14 @@ function MapViewComponent({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  console.log('Clicked marker:', m.title, m.latlng);
-                  if (m.latlng) {
-                    const lat = m.latlng.lat;
-                    const lng = m.latlng.lng;
-                    console.log('Setting zoom target to:', lat, lng);
-                    console.log('mapRef exists?', !!mapRef.current);
-                    setZoomTarget({ lat, lng, zoom: 8 });
+                  console.log('🔵 [Cluster Item Click]', m.title);
+                  if (hoveredCluster && hoveredCluster.markers) {
+                    // Get bounds of all markers in this cluster
+                    const bounds = hoveredCluster.markers.map(marker => [marker.latlng.lat, marker.latlng.lng]);
+                    console.log('🔵 Bounds:', bounds);
+                    console.log('🔵 Number of markers:', bounds.length);
+                    console.log('🔵 Setting zoomTarget with bounds');
+                    setZoomTarget({ bounds });
                   }
                 }}
               >
@@ -609,7 +677,7 @@ function MapViewComponent({
 
           {/* Footer */}
           <div className="cluster-overlay-footer">
-            Click any item to zoom to that location
+            Click any item to zoom to that location and view it
           </div>
         </div>
       )}
