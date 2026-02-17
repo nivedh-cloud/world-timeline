@@ -167,8 +167,23 @@ export default function App() {
   };
 
   return (
-    <div className={isMobilePortrait ? "w-screen h-screen bg-gray-50 flex flex-col overflow-hidden" : "min-h-screen bg-gray-50 flex flex-col items-center p-4"}>
-      <div className={isMobilePortrait ? "w-full h-full flex flex-col flex-1" : "w-full max-w-5xl"}>
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#f3f4f6',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      margin: 0,
+      padding: 0
+    }}>
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         {loading && (
           <div style={{
             position: 'fixed',
@@ -256,7 +271,7 @@ export default function App() {
                 width: '80px', 
                 flexShrink: 0,
                 minHeight: 0,
-                overflowY: 'auto',
+                overflowY: 'hidden',
                 padding: '0px 4px',
                 backgroundColor:"#d6e1e2"
               }}>
@@ -269,14 +284,16 @@ export default function App() {
           </>
         ) : (
           // Desktop/Landscape: Stacked layout (Timeline top, Map bottom)
-          <div style={{ width: '100%', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minHeight: 0, overflow: 'hidden', padding: '16px' }}>
             <TimelineControls
               currentYear={currentYear}
               onYearChange={handleYearChange}
               language={language}
               onLanguageToggle={handleLanguageToggle}
             />
-            <MapView events={filteredEvents} language={language} />
+            <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+              <MapView events={filteredEvents} language={language} />
+            </div>
           </div>
         )}
       </div>

@@ -494,13 +494,13 @@ function MapViewComponent({
   }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <MapContainer
       center={defaultCenter}
       zoom={defaultZoom}
       scrollWheelZoom
       className="map-section"
-      style={{ minHeight: 500 }}
+      style={{ width: '100%', height: '100%', minHeight: 0 }}
       key="map-container"
     >
       <MapEventHandler />
