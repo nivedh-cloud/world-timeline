@@ -1,19 +1,27 @@
 import React, { useState, useMemo, useEffect } from "react";
 import TimelineControls from "./components/TimelineControls";
+import TimelineControlsVertical from "./components/TimelineControlsVertical";
 import MapView from "./components/MapView";
 import EventNotifications from "./components/EventNotifications";
-import { ToastContainer, toast, Slide } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   // State
   const [currentYear, setCurrentYear] = useState(0);
   const [language, setLanguage] = useState("en");
-  const [notif, setNotif] = useState("");
+  const [isMobilePortrait, setIsMobilePortrait] = useState(window.innerWidth < 768);
 
   // Load events from split files based on year range
   const [eventData, setEventData] = useState({ BIBLICAL_EVENTS: [], WORLD_EVENTS: [] });
   const [loading, setLoading] = useState(true);
+
+  // Detect device orientation (portrait = mobile vertical timeline, landscape = horizontal)
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePortrait(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Available file ranges (update this if you add/remove files)
   // Dynamically generate 100-year intervals from -4000 to 2000
@@ -32,14 +40,13 @@ export default function App() {
     const selectedRangeEnd = currentYear + SLIDER_STEP;
     const found = FILE_RANGES.find(r => currentYear >= r.start && currentYear < r.end);
     if (!found) {
-      setNotif(`No file range found for year ${currentYear}`);
+      console.error(`No file range found for year ${currentYear}`);
       setEventData({ BIBLICAL_EVENTS: [], WORLD_EVENTS: [] });
       setLoading(false);
       return;
     }
     const bibleUrl = `${import.meta.env.BASE_URL}assets/Bible/${found.start}To${found.end}-BibleEvents.json`;
     const worldUrl = `${import.meta.env.BASE_URL}assets/World/${found.start}To${found.end}-WorldEvents.json`;
-    //setNotif(`Loading files: ${bibleUrl}, ${worldUrl}`);
     setLoading(true);
     console.log(`Trying to fetch Bible events from: ${bibleUrl}`);
     console.log(`Trying to fetch World events from: ${worldUrl}`);
@@ -102,7 +109,6 @@ export default function App() {
         BIBLICAL_EVENTS: filteredBible,
         WORLD_EVENTS: filteredWorld
       });
-      //setNotif(`Loaded: ${filteredBible.length} Bible events, ${filteredWorld.length} World events for this range. (Files: ${bibleUrl}, ${worldUrl})`);
       setLoading(false);
     });
   }, [currentYear]);
@@ -160,19 +166,9 @@ export default function App() {
     setCurrentYear(0);
   };
 
-  useEffect(() => {
-    if (!loading) {
-      //setNotif(`Loaded: ${eventData.BIBLICAL_EVENTS.length} Bible events, ${eventData.WORLD_EVENTS.length} World events for this range.`);
-      const timer = setTimeout(() => setNotif(""), 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [rangeStart, rangeEnd, eventData.BIBLICAL_EVENTS.length, eventData.WORLD_EVENTS.length, loading]);
-
-  // Toast notifications disabled - using EventNotifications component instead
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="w-full max-w-5xl">
+    <div className={isMobilePortrait ? "w-screen h-screen bg-gray-50 flex flex-col overflow-hidden" : "min-h-screen bg-gray-50 flex flex-col items-center p-4"}>
+      <div className={isMobilePortrait ? "w-full h-full flex flex-col flex-1" : "w-full max-w-5xl"}>
         {loading && (
           <div style={{
             position: 'fixed',
@@ -189,34 +185,100 @@ export default function App() {
             color: '#222'
           }}>Loading events...</div>
         )}
-        {notif && (
-          <div style={{
-            position: 'fixed',
-            top: 24,
-            left: 0,
-            right: 0,
-            margin: '0 auto',
-            zIndex: 1000,
-            width: 'fit-content',
-            background: '#222',
-            color: '#fff',
-            borderRadius: 8,
-            padding: '10px 24px',
-            fontSize: 16,
-            boxShadow: '0 2px 12px #0002',
-            opacity: 0.95,
-            textAlign: 'center',
-            transition: 'opacity 0.3s'
-          }}>{notif}</div>
-        )}
         <EventNotifications events={filteredEvents} language={language} />
-        <TimelineControls
-          currentYear={currentYear}
-          onYearChange={handleYearChange}
-          language={language}
-          onLanguageToggle={handleLanguageToggle}
-        />
-        <MapView events={filteredEvents} language={language} />
+        
+        {isMobilePortrait ? (
+          // Mobile Portrait: Side by side layout (Map left, Timeline right)
+          <>
+            {/* Header at top - Year range and Language toggle */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '16px 12px',
+              marginBottom: '0px',
+              width: '100%',
+              backgroundColor:"#bfb9e8",
+              flexShrink: 0
+            }}>
+              <div style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+                Year: {currentYear < 0 ? `${Math.abs(currentYear)} BC` : `${currentYear} AD`} to {currentYear + 50 < 0 ? `${Math.abs(currentYear + 50)} BC` : `${currentYear + 50} AD`}
+              </div>
+              <button
+                onClick={handleLanguageToggle}
+                style={{
+                  marginRight: '58px',
+                  padding: '8px 32px',
+                  background: '#0078ff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={e => {
+                  e.target.style.background = '#0052cc';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(0, 120, 255, 0.3)';
+                }}
+                onMouseLeave={e => {
+                  e.target.style.background = '#0078ff';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                {language === "en" ? "EN" : "TE"}
+              </button>
+            </div>
+
+            {/* Map and Timeline side by side - takes remaining height */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '0px', 
+              width: '100%', 
+              flex: 1,
+              minHeight: 0
+            }}>
+              {/* Map on the left */}
+              <div style={{ 
+                flex: 1, 
+                minWidth: 0, 
+                minHeight: 0,
+                overflow: 'hidden'
+              }}>
+                <MapView events={filteredEvents} language={language} />
+              </div>
+              
+              {/* Timeline on the right */}
+              <div style={{ 
+                width: '80px', 
+                flexShrink: 0,
+                minHeight: 0,
+                overflowY: 'auto',
+                padding: '0px 4px',
+                backgroundColor:"#d6e1e2"
+              }}>
+                <TimelineControlsVertical
+                  currentYear={currentYear}
+                  onYearChange={handleYearChange}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          // Desktop/Landscape: Stacked layout (Timeline top, Map bottom)
+          <div style={{ width: '100%', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <TimelineControls
+              currentYear={currentYear}
+              onYearChange={handleYearChange}
+              language={language}
+              onLanguageToggle={handleLanguageToggle}
+            />
+            <MapView events={filteredEvents} language={language} />
+          </div>
+        )}
       </div>
     </div>
   );

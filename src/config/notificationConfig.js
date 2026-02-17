@@ -25,7 +25,7 @@ export const NOTIFICATION_CONFIG = {
   NOTIFICATION_GAP: 12,
 
   // Show/hide notifications
-  ENABLED: true,
+  ENABLED: false,
 
   // Position can be: "bottom-right", "bottom-left", "top-right", "top-left"
   POSITION: "bottom-right",

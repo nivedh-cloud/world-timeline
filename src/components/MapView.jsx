@@ -5,13 +5,17 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/ClusterOverlay.css";
 
-const singleColorCircle = new L.DivIcon({
-  html: '<div style="background:#4f46e5;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0002;"></div>',
-  className: '',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-  popupAnchor: [0, -8]
-});
+// Create different marker icons based on event type
+const getMarkerIcon = (eventType) => {
+  const color = eventType === 'biblical' ? '#7c3aed' : '#ff8800'; // Purple for biblical, orange for world
+  return new L.DivIcon({
+    html: `<div style="background:${color};width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px #0002;"></div>`,
+    className: '',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+    popupAnchor: [0, -8]
+  });
+};
 
 // Location detection based on coordinates
 const getLocationName = (lat, lng, language = 'en') => {
@@ -86,15 +90,43 @@ const getLocationName = (lat, lng, language = 'en') => {
 
 // Memoized cluster icon creation function to prevent re-renders
 const clusterIconCreateFunction = (cluster) => {
+  // Get all child markers and determine dominant event type
+  const childMarkers = cluster.getAllChildMarkers();
+  let biblicalCount = 0;
+  let worldCount = 0;
+  
+  childMarkers.forEach((marker, idx) => {
+    // Try multiple ways to access the event type
+    const eventType = marker._eventType || marker.options?.eventType || marker.options?.eventData?.type;
+    console.log(`Marker ${idx}:`, {_eventType: marker._eventType, eventType, marker});
+    if (eventType === 'biblical') biblicalCount++;
+    else if (eventType === 'world') worldCount++;
+  });
+  
+  console.log('Cluster color determination:', {biblicalCount, worldCount, totalMarkers: childMarkers.length});
+  
+  // Determine color based on dominant event type
+  const color = biblicalCount > worldCount ? '#7c3aedCC' : '#ff8800CC'; // Purple for biblical, Orange for world
+  
   return L.divIcon({
     className: 'marker-cluster-custom',
-    html: `<div style="background:#4f46e5CC;width:32px;height:32px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;font-size:15px;box-shadow:0 1px 8px #0002;opacity:0.85;">${cluster.getChildCount()}</div>`
+    html: `<div style="background:${color};width:32px;height:32px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;font-size:15px;box-shadow:0 1px 8px #0002;opacity:0.85;">${cluster.getChildCount()}</div>`
   });
 };
 
 // Memoized EventMarker component with hover and click handlers
 const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick, mapRef }) => {
   const markerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    // Attach event type directly to the Leaflet marker instance for cluster detection
+    if (markerRef.current) {
+      const marker = markerRef.current.leafletElement || markerRef.current;
+      marker._eventType = event.type;
+      marker._event = event;
+      console.log('Attaching event type to marker:', event.type, marker);
+    }
+  }, [event]);
 
   const handleMouseOver = () => {
     if (mapRef?.current) {
@@ -110,20 +142,15 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
     onMarkerHover(null);
   };
 
-  const handleClick = () => {
-    onMarkerClick({ lat: event.lat, lng: event.lon, zoom: 8 });
-  };
-
   return (
     <Marker
       ref={markerRef}
       position={[event.lat, event.lon]}
-      icon={singleColorCircle}
-      options={{ eventData: event }}
+      icon={getMarkerIcon(event.type)}
+      options={{ eventData: event, eventType: event.type }}
       eventHandlers={{
         mouseover: handleMouseOver,
-        mouseout: handleMouseOut,
-        click: handleClick
+        mouseout: handleMouseOut
       }}
     >
       <Popup>
@@ -179,6 +206,21 @@ function MapViewComponent({
     if (!hoveredCluster || !hoveredCluster.markers) return null;
     const coords = hoveredCluster.markers.map(m => [m.latlng.lat, m.latlng.lng]);
     return coords.length > 2 ? coords : null;
+  }, [hoveredCluster]);
+
+  // Calculate polygon color based on dominant event type in cluster
+  const polygonColor = React.useMemo(() => {
+    if (!hoveredCluster || !hoveredCluster.markers) return '#7c3aed';
+    let biblicalCount = 0;
+    let worldCount = 0;
+    
+    hoveredCluster.markers.forEach(marker => {
+      const eventType = marker.eventData?.type;
+      if (eventType === 'biblical') biblicalCount++;
+      else if (eventType === 'world') worldCount++;
+    });
+    
+    return biblicalCount > worldCount ? '#7c3aed' : '#ff8800'; // Purple for biblical, Orange for world
   }, [hoveredCluster]);
 
   // Initialize refs on mount
@@ -249,9 +291,38 @@ function MapViewComponent({
       // Calculate overlay position - will be centered vertically via CSS transform
       if (mapRef.current) {
         const containerPoint = mapRef.current.latLngToContainerPoint(clusterLatLng);
+        let x = containerPoint.x + 50;
+        let y = containerPoint.y;
+        
+        // Get map container bounds for bounds checking
+        const mapContainer = mapRef.current.getContainer();
+        const mapBounds = mapContainer.getBoundingClientRect();
+        const mapWidth = mapBounds.width;
+        const mapHeight = mapBounds.height;
+        
+        // Estimate overlay dimensions
+        const overlayWidth = 320;
+        const overlayHeight = 300;
+        
+        // Adjust x to keep overlay within bounds
+        if (x + overlayWidth > mapWidth) {
+          x = mapWidth - overlayWidth - 10;
+        }
+        if (x < 10) {
+          x = 10;
+        }
+        
+        // Adjust y to keep overlay within bounds
+        if (y + overlayHeight > mapHeight) {
+          y = mapHeight - overlayHeight - 10;
+        }
+        if (y < 10) {
+          y = 10;
+        }
+        
         setOverlayPosition({
-          x: containerPoint.x + 50,
-          y: containerPoint.y // Top of cluster, will be centered via transform
+          x: x,
+          y: y
         });
       }
     };
@@ -429,7 +500,7 @@ function MapViewComponent({
       zoom={defaultZoom}
       scrollWheelZoom
       className="map-section"
-      style={{ minHeight: 500 , marginTop:30}}
+      style={{ minHeight: 500 }}
       key="map-container"
     >
       <MapEventHandler />
@@ -438,7 +509,7 @@ function MapViewComponent({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {polygonCoords && hoveredCluster && (
-        <Polygon key={`poly-${hoveredCluster.latlng.lat}-${hoveredCluster.latlng.lng}`} positions={polygonCoords} pathOptions={{ color: '#4f46e5', weight: 2, fillOpacity: 0.1 }} />
+        <Polygon key={`poly-${hoveredCluster.latlng.lat}-${hoveredCluster.latlng.lng}`} positions={polygonCoords} pathOptions={{ color: polygonColor, weight: 2, fillOpacity: 0.1 }} />
       )}
       <MarkerClusterGroup
         ref={handleClusterRef}
@@ -486,11 +557,17 @@ function MapViewComponent({
           className="cluster-overlay"
           style={{
             left: `${overlayPosition.x}px`,
-            top: `${overlayPosition.y}px`
+            top: `${overlayPosition.y}px`,
+            borderColor: polygonColor
           }}
         >
           {/* Header */}
-          <div className="cluster-overlay-header">
+          <div 
+            className="cluster-overlay-header"
+            style={{
+              background: polygonColor === '#7c3aed' ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' : 'linear-gradient(135deg, #ff8800 0%, #ff6600 100%)'
+            }}
+          >
             <span>📍 Events in {overlayLocationName} ({hoveredCluster.markers.length})</span>
             <button
               onClick={() => setHoveredCluster(null)}

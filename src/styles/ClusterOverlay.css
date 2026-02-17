@@ -2,7 +2,7 @@
 .cluster-overlay {
   position: absolute;
   background: #ffffff;
-  border: 2px solid #0078ff;
+  border: 2px solid #7c3aed;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 120, 255, 0.1);
   z-index: 1000;
@@ -15,7 +15,7 @@
 
 /* Overlay Header */
 .cluster-overlay-header {
-  background: linear-gradient(135deg, #0078ff 0%, #0052cc 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
   color: #fff;
   padding: 12px 16px;
   border-radius: 10px 10px 0 0;
