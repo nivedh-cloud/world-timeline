@@ -44,7 +44,7 @@
   outline: none;
   cursor: pointer;
   position: relative;
-  margin-left: -20px;
+  margin-left: -24px;
   z-index: 10;
 }
 
@@ -125,7 +125,8 @@
   user-select: none;
   white-space: nowrap;
   background: transparent;
-  margin-left: 9px;
+  margin-left: 6px;
+  font-weight: bold;
 }
 
 .timeline-tick-label-vertical:hover {
