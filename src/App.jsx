@@ -213,7 +213,7 @@ export default function App() {
               padding: '16px 12px',
               marginBottom: '0px',
               width: '100%',
-              backgroundColor:"#bfb9e8",
+              backgroundColor:"#ffffff",
               flexShrink: 0
             }}>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
