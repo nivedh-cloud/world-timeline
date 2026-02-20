@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import "../styles/TimelineControlsVertical.css";
+import YearPickerGear from "./YearPickerGear";
 
 export default function TimelineControlsVertical({
   currentYear,
@@ -48,53 +49,7 @@ export default function TimelineControlsVertical({
 
   return (
     <div className="timeline-controls-vertical">
-      <div className="vertical-slider-wrapper">
-        <div className="vertical-slider-container">
-          <input
-            ref={sliderRef}
-            type="range"
-            min={SLIDER_MIN}
-            max={SLIDER_MAX}
-            step={50}
-            value={currentYear}
-            onChange={e => onYearChange(Number(e.target.value))}
-            onKeyDown={handleKeyDown}
-            className="year-slider-vertical"
-            tabIndex={0}
-          />
-          
-          {/* Vertical Timeline Ticks */}
-          <div className="vertical-ticks-container">
-            {ticks.map(t => {
-              const pct = sliderValueToPosition(t);
-              const isSpecialRange = t >= 0 && t <= 100; // 0 AD to 100 AD
-              return (
-                <div 
-                  key={t} 
-                  className={`timeline-tick-vertical ${isSpecialRange ? 'timeline-tick-special' : ''}`}
-                  style={{ top: `${pct}%` }}
-                >
-                  <div className="timeline-tick-line-vertical" />
-                  <div 
-                    className={`timeline-tick-label-vertical ${isSpecialRange ? 'timeline-tick-label-top' : ''}`}
-                    onClick={() => onYearChange(t)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onYearChange(t);
-                      }
-                    }}
-                  >
-                    {formatTick(t)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
     </div>
   );
 }

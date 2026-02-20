@@ -167,7 +167,8 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
 
 function MapViewComponent({
   events,
-  language
+  language,
+  isMobilePortrait
 }) {
   // State for overlay only - needs to update UI
   const [hoveredCluster, setHoveredCluster] = React.useState(null); // { latlng, markers }
@@ -395,7 +396,8 @@ function MapViewComponent({
 
     React.useEffect(() => {
       if (!map) return;
-      const zoomToWorldButton = L.control({ position: 'topleft' });
+      const controlPosition = isMobilePortrait ? 'bottomleft' : 'topleft';
+      const zoomToWorldButton = L.control({ position: controlPosition });
       zoomToWorldButton.onAdd = () => {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
         const button = L.DomUtil.create('a', '', container);
@@ -424,6 +426,9 @@ function MapViewComponent({
         button.style.backgroundColor = '#fff';
         button.style.cursor = 'pointer';
         button.style.userSelect = 'none';
+        if (isMobilePortrait) {
+          button.style.marginBottom = '35px';
+        }
         L.DomEvent.disableClickPropagation(button);
         L.DomEvent.on(button, 'click', (e) => {
           L.DomEvent.preventDefault(e);
@@ -476,7 +481,7 @@ function MapViewComponent({
         zoomToWorldButton.remove();
         creditControl.remove();
       };
-    }, [map]);
+    }, [map, isMobilePortrait]);
 
     useMapEvents({
       moveend: (e) => {

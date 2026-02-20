@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "../styles/TimelineControls.css";
+import YearPickerGear from "./YearPickerGear";
 
 export default function TimelineControls({
   currentYear,
@@ -7,6 +8,7 @@ export default function TimelineControls({
   language,
   onLanguageToggle
 }) {
+  const [showGearPicker, setShowGearPicker] = useState(false);
   // Show 50-year range
   const rangeStart = currentYear;
   const rangeEnd = currentYear + 50;
@@ -43,55 +45,7 @@ export default function TimelineControls({
 
   return (
     <div className="timeline-controls">
-      <div className="timeline-controls-row">
-        <div className="year-label">
-          Year: {formatYear(rangeStart)} to {formatYear(rangeEnd)}
-        </div>
-        <button
-          onClick={onLanguageToggle}
-          className="lang-toggle"
-        >
-          {language === "en" ? "EN" : "TE"}
-        </button>
-      </div>
-      <div className="slider-container" style={{ position: 'relative' }}>
-        <input
-          ref={sliderRef}
-          type="range"
-          min={SLIDER_MIN}
-          max={SLIDER_MAX}
-          step={50}
-          value={currentYear}
-          onChange={e => onYearChange(Number(e.target.value))}
-          onKeyDown={handleKeyDown}
-          className="year-slider"
-          tabIndex={0}
-        />
-        <div style={{ position: 'absolute', left: 10, right: 7, top: 28, height: 28 }}>
-          {ticks.map(t => {
-            const pct = ((t - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
-            return (
-              <div key={t} className="timeline-tick" style={{ left: `${pct}%` }}>
-                <div className="timeline-tick-line" />
-                <div 
-                  className="timeline-tick-label"
-                  onClick={() => onYearChange(t)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onYearChange(t);
-                    }
-                  }}
-                >
-                  {formatTick(t)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
     </div>
   );
 }

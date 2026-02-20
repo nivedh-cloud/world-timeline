@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import TimelineControls from "./components/TimelineControls";
 import TimelineControlsVertical from "./components/TimelineControlsVertical";
 import MapView from "./components/MapView";
@@ -6,7 +6,7 @@ import EventNotifications from "./components/EventNotifications";
 
 export default function App() {
   // State
-  const [currentYear, setCurrentYear] = useState(0);
+  const [currentYear, setCurrentYear] = useState(10);
   const [language, setLanguage] = useState("en");
   const [isMobilePortrait, setIsMobilePortrait] = useState(window.innerWidth < 768);
 
@@ -33,7 +33,13 @@ export default function App() {
     return ranges;
   }, []);
 
+  // Track fetch calls for debugging
+  const fetchCountRef = React.useRef(0);
+
   useEffect(() => {
+    fetchCountRef.current++;
+    console.log(`%c=== FETCH #${fetchCountRef.current} === Year: ${currentYear}`, 'background: red; color: white; font-size: 14px; font-weight: bold;');
+    
     // Determine the selected range (slider window)
     const SLIDER_STEP = 50; // adjust if your slider step is different
     const selectedRangeStart = currentYear;
@@ -48,8 +54,8 @@ export default function App() {
     const bibleUrl = `${import.meta.env.BASE_URL}assets/Bible/${found.start}To${found.end}-BibleEvents.json`;
     const worldUrl = `${import.meta.env.BASE_URL}assets/World/${found.start}To${found.end}-WorldEvents.json`;
     setLoading(true);
-    console.log(`Trying to fetch Bible events from: ${bibleUrl}`);
-    console.log(`Trying to fetch World events from: ${worldUrl}`);
+    console.log(`Fetch #${fetchCountRef.current}: Bible from ${found.start}To${found.end}-BibleEvents.json`);
+    console.log(`Fetch #${fetchCountRef.current}: World from ${found.start}To${found.end}-WorldEvents.json`);
     Promise.all([
       (() => {
         console.log(`Fetching Bible events file: ${bibleUrl}`);
@@ -111,7 +117,7 @@ export default function App() {
       });
       setLoading(false);
     });
-  }, [currentYear]);
+  }, [currentYear, FILE_RANGES]);
 
   // Filter events based on overlap with selected range
   // Use the same range as the file
@@ -203,60 +209,18 @@ export default function App() {
         <EventNotifications events={filteredEvents} language={language} />
         
         {isMobilePortrait ? (
-          // Mobile Portrait: Side by side layout (Map left, Timeline right)
+          // Mobile Portrait: Full screen map with overlay controls
           <>
-            {/* Header at top - Year range and Language toggle */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              padding: '16px 12px',
-              marginBottom: '0px',
-              width: '100%',
-              backgroundColor:"#ffffff",
-              flexShrink: 0
-            }}>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
-                Year: {currentYear < 0 ? `${Math.abs(currentYear)} BC` : `${currentYear} AD`} to {currentYear + 50 < 0 ? `${Math.abs(currentYear + 50)} BC` : `${currentYear + 50} AD`}
-              </div>
-              <button
-                onClick={handleLanguageToggle}
-                style={{
-                  marginRight: '58px',
-                  padding: '8px 32px',
-                  background: '#0078ff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={e => {
-                  e.target.style.background = '#0052cc';
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(0, 120, 255, 0.3)';
-                }}
-                onMouseLeave={e => {
-                  e.target.style.background = '#0078ff';
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = 'none';
-                }}
-              >
-                {language === "en" ? "EN" : "TE"}
-              </button>
-            </div>
-
-            {/* Map and Timeline side by side - takes remaining height */}
+            {/* Map takes full screen */}
             <div style={{ 
               display: 'flex', 
               gap: '0px', 
               width: '100%', 
               flex: 1,
-              minHeight: 0
+              minHeight: 0,
+              overflow: 'hidden'
             }}>
-              {/* Map on the left */}
+              {/* Map full width and height */}
               <div style={{ 
                 flex: 1, 
                 minWidth: 0, 
@@ -265,35 +229,28 @@ export default function App() {
               }}>
                 <MapView events={filteredEvents} language={language} />
               </div>
-              
-              {/* Timeline on the right */}
-              <div style={{ 
-                width: '40px', 
-                flexShrink: 0,
-                minHeight: 0,
-                overflowY: 'hidden',
-                padding: '0px 4px',
-                backgroundColor:"#d6e1e2"
-              }}>
-                <TimelineControlsVertical
-                  currentYear={currentYear}
-                  onYearChange={handleYearChange}
-                />
-              </div>
             </div>
+            
+            {/* TimelineControlsVertical now renders as fixed overlay at bottom */}
+            <TimelineControlsVertical
+              currentYear={currentYear}
+              onYearChange={handleYearChange}
+            />
           </>
         ) : (
-          // Desktop/Landscape: Stacked layout (Timeline top, Map bottom)
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minHeight: 0, overflow: 'hidden', padding: '16px' }}>
+          // Desktop/Landscape: Full screen map with overlay controls
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden', padding: '0' }}>
+            <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+              <MapView events={filteredEvents} language={language} isMobilePortrait={isMobilePortrait} />
+            </div>
+            
+            {/* TimelineControls now renders as fixed overlay at bottom-right */}
             <TimelineControls
               currentYear={currentYear}
               onYearChange={handleYearChange}
               language={language}
               onLanguageToggle={handleLanguageToggle}
             />
-            <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-              <MapView events={filteredEvents} language={language} />
-            </div>
           </div>
         )}
       </div>

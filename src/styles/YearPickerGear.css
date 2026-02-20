@@ -1,0 +1,347 @@
+/* Year Picker Gear Component */
+.year-picker-gear {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: none;
+}
+
+.picker-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Scroll Container - The Gear */
+.picker-scroll-container {
+  width: 100%;
+  height: 250px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  position: relative;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  padding: 0;
+  margin: 0;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Scrollbar styling for WebKit browsers */
+.picker-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.picker-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.picker-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 8px;
+}
+
+.picker-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Year Items */
+.picker-item {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  font-size: 16px;
+  color: #999;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-left: 4px solid transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  position: relative;
+}
+
+.picker-item:hover {
+  background-color: #f9f9f9;
+  color: #666;
+}
+
+/* Active Item - Center Item */
+.picker-item-active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  font-weight: 700;
+  font-size: 18px;
+  border-left-color: #fff;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+  transform: scale(1.05);
+}
+
+.picker-item-text {
+  display: block;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.3px;
+}
+
+/* Spacers for centering effect */
+.picker-spacer {
+  height: 75px;
+  flex-shrink: 0;
+  background: white;
+}
+
+/* Gear/Indicator Line - Shows selected item */
+.picker-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(
+    to right,
+    rgba(33, 150, 243, 0.1) 0%,
+    rgba(33, 150, 243, 0.2) 50%,
+    rgba(33, 150, 243, 0.1) 100%
+  );
+  border-top: 2px solid #2196f3;
+  border-bottom: 2px solid #2196f3;
+  pointer-events: none;
+  transform: translateY(0);
+  box-shadow: inset 0 -8px 8px rgba(33, 150, 243, 0.05),
+              inset 0 8px 8px rgba(33, 150, 243, 0.05);
+}
+
+/* Mobile Portrait View */
+@media (max-width: 768px) {
+  .year-picker-gear {
+    padding: 16px 0;
+    gap: 12px;
+    margin-bottom: 0;
+    width: 100%;
+    max-width: none;
+    border-radius: 16px 16px 0 0;
+    background: white;
+    box-shadow: none;
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Expanded full-screen state on mobile */
+  .year-picker-gear-expanded {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    padding: 0;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Mobile button - shown when picker is collapsed */
+  .year-picker-mobile-button {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    z-index: 9998;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .year-picker-mobile-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);
+  }
+
+  .year-picker-mobile-button-text {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Label container with close button */
+  .picker-label-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .picker-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    margin: 0;
+  }
+
+  /* Year input field */
+  .picker-year-input {
+    flex: 1;
+    margin: 0 12px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .picker-year-input:focus {
+    border-color: #2196f3;
+  }
+
+  .picker-year-input::placeholder {
+    color: #ccc;
+  }
+
+  /* Close button for expanded picker */
+  .picker-close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+  }
+
+  .picker-close-button:active {
+    color: #333;
+  }
+
+  .picker-scroll-container {
+    width: 100%;
+    height: 240px;
+    border-radius: 0;
+    margin: 0;
+    border-top: none;
+    border-bottom: none;
+    border: none;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* Expanded state - full height scroll */
+  .year-picker-gear-expanded .picker-scroll-container {
+    height: auto;
+    flex: 1;
+  }
+
+  .picker-item {
+    height: 50px;
+    font-size: 18px;
+    padding: 0 16px;
+  }
+
+  .picker-item-active {
+    font-size: 22px;
+    font-weight: 700;
+    transform: scale(1.08);
+  }
+
+  .picker-spacer {
+    height: 95px;
+  }
+
+  .picker-indicator {
+    height: 50px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .year-picker-mobile-button {
+    bottom: 35px;
+    right: 16px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .picker-label-container {
+    padding: 12px;
+  }
+
+  .picker-label {
+    font-size: 12px;
+  }
+
+  .picker-year-input {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .picker-close-button {
+    font-size: 20px;
+  }
+
+  .picker-scroll-container {
+    height: 150px;
+  }
+
+  .picker-item {
+    height: 40px;
+    font-size: 16px;
+    padding: 0 6px;
+  }
+
+  .picker-item-active {
+    font-size: 20px;
+  }
+
+  .picker-spacer {
+    height: 55px;
+  }
+
+  .picker-indicator {
+    height: 40px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .picker-scroll-container {
+    scroll-behavior: auto;
+  }
+
+  .picker-item {
+    transition: none;
+  }
+
+  .picker-item-active {
+    transform: none;
+  }
+}
