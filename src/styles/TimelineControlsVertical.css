@@ -1,7 +1,7 @@
 /* Vertical Timeline Controls for Mobile/Portrait */
 .timeline-controls-vertical {
   position: fixed;
-  bottom: 0;
+  bottom: 90px;
   left: 0;
   right: 0;
   width: 100%;
@@ -13,8 +13,7 @@
   margin: 0;
   z-index: 9999;
   pointer-events: auto;
-  background: white;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+  background: transparent;
   max-height: 400px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -27,8 +26,10 @@
   max-width: none;
   max-height: none;
   margin: 0;
-  padding: 12px;
-  border-radius: 12px 12px 0 0;
+  padding: 8px !important;
+  border-radius: 0 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Vertical Slider Wrapper - HIDDEN */

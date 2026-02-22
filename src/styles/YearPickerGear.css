@@ -12,6 +12,20 @@
   max-width: none;
 }
 
+@media (max-width: 767px) {
+  .year-picker-gear {
+    padding: 6px !important;
+    gap: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .picker-label {
+    font-size: 12px !important;
+  }
+}
+
 .picker-label {
   font-size: 14px;
   font-weight: 600;
@@ -35,6 +49,13 @@
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   scrollbar-width: thin;
   scrollbar-color: #888 #f1f1f1;
+}
+
+@media (max-width: 767px) {
+  .picker-scroll-container {
+    height: 180px !important;
+    border: 1px solid #d0d0d0 !important;
+  }
 }
 
 /* Scrollbar styling for WebKit browsers */

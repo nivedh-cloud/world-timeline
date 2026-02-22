@@ -129,3 +129,15 @@
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
+/* Leaflet Credit Control - Bottom positioning with margin */
+.leaflet-bottom.leaflet-left {
+  margin-bottom: 80px !important;
+}
+
+/* Leaflet Zoom Control - Hide on very small screens */
+@media (max-width: 480px) {
+  .leaflet-top.leaflet-left {
+    display: none;
+  }
+}
