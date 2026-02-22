@@ -14,10 +14,10 @@
 
 @media (max-width: 767px) {
   .year-picker-gear {
-    padding: 6px !important;
-    gap: 6px !important;
-    background: transparent !important;
-    box-shadow: none !important;
+    padding: 8px !important;
+    gap: 8px !important;
+    background: white !important;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
     border-radius: 0 !important;
   }
 
@@ -55,6 +55,7 @@
   .picker-scroll-container {
     height: 180px !important;
     border: 1px solid #d0d0d0 !important;
+    background: white !important;
   }
 }
 
@@ -149,14 +150,14 @@
 /* Mobile Portrait View */
 @media (max-width: 768px) {
   .year-picker-gear {
-    padding: 0;
-    gap: 0;
+    padding: 8px;
+    gap: 8px;
     margin-bottom: 0;
     width: 100%;
     max-width: none;
     border-radius: 0;
-    background: transparent;
-    box-shadow: none;
+    background: white;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 100;
   }
@@ -268,7 +269,7 @@
     border: none;
     flex: 1;
     overflow-y: auto;
-    background: transparent;
+    background: white;
   }
 
   /* Expanded state - full height scroll */
@@ -281,7 +282,7 @@
     height: 50px;
     font-size: 18px;
     padding: 0 16px;
-    background: transparent;
+    background: white;
     border-left: none;
   }
 
@@ -293,7 +294,7 @@
 
   .picker-spacer {
     height: 95px;
-    background: transparent;
+    background: white;
   }
 
   .picker-indicator {
