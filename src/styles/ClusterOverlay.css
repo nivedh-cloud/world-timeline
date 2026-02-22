@@ -139,10 +139,10 @@
 
 /* Leaflet Credit Control - Keep at bottom of map above year picker */
 .leaflet-bottom.leaflet-left {
-  bottom: 28px !important;
-  left: 0px !important;
+  bottom: 30px !important;
+  left: 1px !important;
   right: auto !important;
-  z-index: 1001 !important;
+  z-index: 998 !important;
 }
 
 /* Ensure Leaflet controls are visible above all overlays */

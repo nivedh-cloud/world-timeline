@@ -149,13 +149,13 @@
 /* Mobile Portrait View */
 @media (max-width: 768px) {
   .year-picker-gear {
-    padding: 16px 0;
-    gap: 12px;
+    padding: 0;
+    gap: 0;
     margin-bottom: 0;
     width: 100%;
     max-width: none;
-    border-radius: 16px 16px 0 0;
-    background: white;
+    border-radius: 0;
+    background: transparent;
     box-shadow: none;
     position: relative;
     z-index: 100;
@@ -212,11 +212,7 @@
 
   /* Label container with close button */
   .picker-label-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    display: none;
   }
 
   .picker-label {
@@ -269,11 +265,10 @@
     height: 240px;
     border-radius: 0;
     margin: 0;
-    border-top: none;
-    border-bottom: none;
     border: none;
     flex: 1;
     overflow-y: auto;
+    background: transparent;
   }
 
   /* Expanded state - full height scroll */
@@ -286,6 +281,8 @@
     height: 50px;
     font-size: 18px;
     padding: 0 16px;
+    background: transparent;
+    border-left: none;
   }
 
   .picker-item-active {
@@ -296,10 +293,15 @@
 
   .picker-spacer {
     height: 95px;
+    background: transparent;
   }
 
   .picker-indicator {
     height: 50px;
+    background: transparent;
+    border-top: 2px solid #2196f3;
+    border-bottom: 2px solid #2196f3;
+    box-shadow: none;
   }
 }
 

@@ -420,7 +420,7 @@ function MapViewComponent({
         const container = L.DomUtil.create('div', '');
         container.innerHTML = `
           <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 10px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
-            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> Designed and developed by <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath</span>
+            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> <span style="color:#888;">Designed and developed by</span> <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath</span>
           </div>
         `;
         L.DomEvent.disableClickPropagation(container);
