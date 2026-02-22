@@ -289,41 +289,17 @@ function MapViewComponent({
         })
       });
       
-      // Calculate overlay position - will be centered vertically via CSS transform
+      // Calculate overlay position - centered horizontally and vertically
       if (mapRef.current) {
         const containerPoint = mapRef.current.latLngToContainerPoint(clusterLatLng);
-        let x = containerPoint.x + 50;
-        let y = containerPoint.y;
-        
-        // Get map container bounds for bounds checking
         const mapContainer = mapRef.current.getContainer();
         const mapBounds = mapContainer.getBoundingClientRect();
-        const mapWidth = mapBounds.width;
-        const mapHeight = mapBounds.height;
         
-        // Estimate overlay dimensions
-        const overlayWidth = 320;
-        const overlayHeight = 300;
-        
-        // Adjust x to keep overlay within bounds
-        if (x + overlayWidth > mapWidth) {
-          x = mapWidth - overlayWidth - 10;
-        }
-        if (x < 10) {
-          x = 10;
-        }
-        
-        // Adjust y to keep overlay within bounds
-        if (y + overlayHeight > mapHeight) {
-          y = mapHeight - overlayHeight - 10;
-        }
-        if (y < 10) {
-          y = 10;
-        }
-        
+        // Center the overlay in the viewport
+        // Fixed positioning with transform handles the centering
         setOverlayPosition({
-          x: x,
-          y: y
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2
         });
       }
     };
@@ -563,6 +539,7 @@ function MapViewComponent({
           style={{
             left: `${overlayPosition.x}px`,
             top: `${overlayPosition.y}px`,
+            transform: 'translate(-50%, -50%)',
             borderColor: polygonColor
           }}
         >

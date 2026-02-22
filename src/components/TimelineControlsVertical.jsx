@@ -4,13 +4,15 @@ import YearPickerGear from "./YearPickerGear";
 
 export default function TimelineControlsVertical({
   currentYear,
-  onYearChange
+  onYearChange,
+  language,
+  onLanguageToggle
 }) {
   const sliderRef = useRef(null);
 
-  // Show 50-year range
+  // Show 10-year range
   const rangeStart = currentYear;
-  const rangeEnd = currentYear + 50;
+  const rangeEnd = currentYear + 10;
   const SLIDER_MIN = -4000;
   const SLIDER_MAX = 2000;
   
@@ -34,10 +36,10 @@ export default function TimelineControlsVertical({
   const handleKeyDown = (e) => {
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      onYearChange(Math.min(currentYear + 50, SLIDER_MAX));
+      onYearChange(Math.min(currentYear + 10, SLIDER_MAX));
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
-      onYearChange(Math.max(currentYear - 50, SLIDER_MIN));
+      onYearChange(Math.max(currentYear - 10, SLIDER_MIN));
     }
   };
 
@@ -48,8 +50,17 @@ export default function TimelineControlsVertical({
   };
 
   return (
-    <div className="timeline-controls-vertical">
-      <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
-    </div>
+    <>
+      <button 
+        className="lang-toggle"
+        onClick={onLanguageToggle}
+        title={`Switch to ${language === 'en' ? 'Telugu' : 'English'}`}
+      >
+        {language === 'en' ? 'TE' : 'EN'} 
+      </button>
+      <div className="timeline-controls-vertical">
+        <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
+      </div>
+    </>
   );
 }

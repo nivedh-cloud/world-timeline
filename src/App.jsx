@@ -41,7 +41,7 @@ export default function App() {
     console.log(`%c=== FETCH #${fetchCountRef.current} === Year: ${currentYear}`, 'background: red; color: white; font-size: 14px; font-weight: bold;');
     
     // Determine the selected range (slider window)
-    const SLIDER_STEP = 50; // adjust if your slider step is different
+    const SLIDER_STEP = 10; // Changed to 10-year intervals
     const selectedRangeStart = currentYear;
     const selectedRangeEnd = currentYear + SLIDER_STEP;
     const found = FILE_RANGES.find(r => currentYear >= r.start && currentYear < r.end);
@@ -105,9 +105,9 @@ export default function App() {
         const s = Number(ev.startYear);
         const e = Number(ev.endYear);
         if (s === e) {
-          return s >= minYear && s <= maxYear;
+          return s >= minYear && s < maxYear;
         }
-        return s <= maxYear && e >= minYear;
+        return s < maxYear && e >= minYear;
       };
       const filteredBible = (bible || []).filter(filterByRange);
       const filteredWorld = (world || []).filter(filterByRange);
@@ -129,8 +129,8 @@ export default function App() {
   const [rangeStart, rangeEnd] = getRange(currentYear);
   const filteredEvents = useMemo(() => {
     let events = [];
-    // Only include events that overlap the selected 50-year range (inclusive)
-    // For BC dates, -100 to -50 means 100 BC to 50 BC inclusive
+    // Only include events that overlap the selected 10-year range (inclusive)
+    // For BC dates, -100 to -90 means 100 BC to 90 BC inclusive
     // Show event if any part of it falls within [rangeStart, rangeEnd)
     console.log('Filtering events for range:', rangeStart, 'to', rangeEnd);
     const minYear = Math.min(rangeStart, rangeEnd);
@@ -142,12 +142,12 @@ export default function App() {
       const e = Number(ev.endYear);
       // If event is a single year
       if (s === e) {
-        const match = s >= minYear && s <= maxYear;
+        const match = s >= minYear && s < maxYear;
         console.log(`Event: ${ev.name_en || ev.name} (${s}) - match: ${match}`);
         return match;
       }
-      // For intervals, check for overlap (inclusive bounds)
-      const match = (s <= maxYear && e >= minYear);
+      // For intervals, check for overlap (non-overlapping windows: [start, end))
+      const match = (s < maxYear && e >= minYear);
       console.log(`Event: ${ev.name_en || ev.name} (${s} to ${e}) - match: ${match}`);
       return match;
     };
@@ -235,6 +235,8 @@ export default function App() {
             <TimelineControlsVertical
               currentYear={currentYear}
               onYearChange={handleYearChange}
+              language={language}
+              onLanguageToggle={handleLanguageToggle}
             />
           </>
         ) : (

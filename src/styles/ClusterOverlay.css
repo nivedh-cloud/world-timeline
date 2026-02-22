@@ -1,6 +1,6 @@
 /* Cluster Overlay Container */
 .cluster-overlay {
-  position: absolute;
+  position: fixed;
   background: #ffffff;
   border: 2px solid #7c3aed;
   border-radius: 12px;
@@ -11,6 +11,7 @@
   backdrop-filter: blur(8px);
   animation: slideIn 0.2s ease-out;
   pointer-events: auto;
+  /* Centering is handled by inline transform style */
 }
 
 /* Overlay Header */

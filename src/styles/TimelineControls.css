@@ -33,16 +33,20 @@
 
 /* Language Toggle Button */
 .lang-toggle {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
   padding: 8px 16px;
   background: #0078ff;
   color: white;
   border: none;
   border-radius: 6px;
-  margin-right: 60px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 14px;
+  z-index: 9998;
+  pointer-events: auto;
 }
 
 .lang-toggle:hover {

@@ -180,8 +180,8 @@
 		"desc_te": "ఎసర్‌హద్దోను అస్సిరియా పాలన ప్రారంభించి, బాబిలోన్‌ను పునర్నిర్మించి, ఈజిప్టులో యుద్ధాలు చేశాడు (2 రాజులు 19:37)"
 	},
 	{
-		"startYear": -700,
-		"endYear": -650,
+		"startYear": -687,
+		"endYear": -642,
 		"name_en": "Reign of King Manasseh of Judah (begins)",
 		"name_te": "యూదా రాజు మనస్సే (ప్రారంభం)",
 		"lat": 31.776,
@@ -350,7 +350,7 @@
 		"desc_te": "యూరేషియన్ స్టెప్పులో స్కైథియా రాజ్యం శక్తిని పొందుతూ, సమీప తూర్పు, బైబిల్ చరిత్రపై ప్రభావం చూపింది."
 	},
 	{
-		"startYear": -697,
+		"startYear": -687,
 		"endYear": -642,
 		"name_en": "Reign of King Manasseh of Judah",
 		"name_te": "యూదా రాజు మనస్సే పాలన",
@@ -1079,16 +1079,7 @@
 		"desc_en": "Jeremiah warns Judah and Jerusalem of the coming destruction by Babylon (Jeremiah 25:1-11; 32:28-35)",
 		"desc_te": "యిర్మియా ప్రవక్త యూదా, యెరూషలేము బాబెలోను చేతిలో వినాశనాన్ని హెచ్చరించాడు (యిర్మియా 25:1-11; 32:28-35)"
 	},
-	{
-		"startYear": -670,
-		"endYear": -630,
-		"name_en": "Manasseh's Long Reign and Idolatry in Judah",
-		"name_te": "యూదాలో మనస్సే దీర్ఘకాల పాలన, విగ్రహారాధన",
-		"lat": 31.78,
-		"lon": 35.23,
-		"desc_en": "Manasseh reigns in Judah for 55 years, leading the nation into idolatry (2 Kings 21:1-9)",
-		"desc_te": "మనస్సే యూదాలో 55 సంవత్సరాలు పాలించి, దేశాన్ని విగ్రహారాధనలోకి నడిపించాడు (2 రాజులు 21:1-9)"
-	},
+
 	{
 		"startYear": -670,
 		"endYear": -630,

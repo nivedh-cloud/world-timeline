@@ -171,8 +171,16 @@
   }
 }
 
-@media (max-height: 400px) {
-  .timeline-tick-line-vertical {
-    width: 4px;
+/* Mobile Language Toggle Button */
+@media (max-width: 767px) {
+  .lang-toggle {
+    position: fixed !important;
+    top: 16px !important;
+    bottom: auto !important;
+    right: 16px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
   }
+}
+
 }

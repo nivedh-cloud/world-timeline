@@ -9,9 +9,9 @@ export default function TimelineControls({
   onLanguageToggle
 }) {
   const [showGearPicker, setShowGearPicker] = useState(false);
-  // Show 50-year range
+  // Show 10-year range
   const rangeStart = currentYear;
-  const rangeEnd = currentYear + 50;
+  const rangeEnd = currentYear + 10;
   const formatYear = y => y < 0 ? `${Math.abs(y)} BC` : `${y} AD`;
   const SLIDER_MIN = -4000;
   const SLIDER_MAX = 2000;
@@ -36,16 +36,25 @@ export default function TimelineControls({
   const handleKeyDown = (e) => {
     if (e.key === "ArrowLeft") {
       e.preventDefault();
-      onYearChange(Math.max(currentYear - 50, -4000));
+      onYearChange(Math.max(currentYear - 10, -4000));
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      onYearChange(Math.min(currentYear + 50, 2000));
+      onYearChange(Math.min(currentYear + 10, 2000));
     }
   };
 
   return (
-    <div className="timeline-controls">
-      <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
-    </div>
+    <>
+      <button 
+        className="lang-toggle"
+        onClick={onLanguageToggle}
+        title={`Switch to ${language === 'en' ? 'Telugu' : 'English'}`}
+      >
+        {language === 'en' ? 'TE' : 'EN'} 
+      </button>
+      <div className="timeline-controls">
+        <YearPickerGear currentYear={currentYear} onYearChange={onYearChange} />
+      </div>
+    </>
   );
 }
