@@ -213,22 +213,12 @@ export default function App() {
           <>
             {/* Map takes full screen */}
             <div style={{ 
-              display: 'flex', 
-              gap: '0px', 
               width: '100%', 
               flex: 1,
               minHeight: 0,
               overflow: 'hidden'
             }}>
-              {/* Map full width and height */}
-              <div style={{ 
-                flex: 1, 
-                minWidth: 0, 
-                minHeight: 0,
-                overflow: 'hidden'
-              }}>
-                <MapView events={filteredEvents} language={language} />
-              </div>
+              <MapView events={filteredEvents} language={language} isMobilePortrait={isMobilePortrait} />
             </div>
             
             {/* TimelineControlsVertical now renders as fixed overlay at bottom */}

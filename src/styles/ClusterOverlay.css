@@ -130,14 +130,22 @@
   }
 }
 
-/* Leaflet Credit Control - Bottom positioning with margin */
-.leaflet-bottom.leaflet-left {
-  margin-bottom: 80px !important;
+/* Leaflet Top Controls - Zoom buttons at top */
+.leaflet-top.leaflet-left {
+  top: 16px !important;
+  left: 16px !important;
+  z-index: 10001 !important;
 }
 
-/* Leaflet Zoom Control - Hide on very small screens */
-@media (max-width: 480px) {
-  .leaflet-top.leaflet-left {
-    display: none;
-  }
+/* Leaflet Credit Control - Keep at bottom of map above year picker */
+.leaflet-bottom.leaflet-left {
+  bottom: 28px !important;
+  left: 0px !important;
+  right: auto !important;
+  z-index: 1001 !important;
+}
+
+/* Ensure Leaflet controls are visible above all overlays */
+.leaflet-control {
+  position: relative;
 }

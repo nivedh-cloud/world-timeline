@@ -372,7 +372,7 @@ function MapViewComponent({
 
     React.useEffect(() => {
       if (!map) return;
-      const controlPosition = isMobilePortrait ? 'bottomleft' : 'topleft';
+      const controlPosition = 'topleft';
       const zoomToWorldButton = L.control({ position: controlPosition });
       zoomToWorldButton.onAdd = () => {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
