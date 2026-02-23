@@ -26,10 +26,10 @@
   max-width: none;
   max-height: none;
   margin: 0;
-  padding: 0 !important;
+  padding: 8px !important;
   border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  background: white !important;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Vertical Slider Wrapper - HIDDEN */

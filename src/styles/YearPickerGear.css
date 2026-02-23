@@ -213,7 +213,11 @@
 
   /* Label container with close button */
   .picker-label-container {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .picker-label {
@@ -287,9 +291,12 @@
   }
 
   .picker-item-active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
     font-size: 22px;
     font-weight: 700;
     transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3) !important;
   }
 
   .picker-spacer {
@@ -343,7 +350,10 @@
   }
 
   .picker-item-active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
     font-size: 20px;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3) !important;
   }
 
   .picker-spacer {
