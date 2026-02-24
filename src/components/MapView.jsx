@@ -165,6 +165,35 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
          prevProps.language === nextProps.language;
 });
 
+// Tile layer options with multiple map styles and satellite view
+const TILE_LAYER_OPTIONS = {
+  street: {
+    name: 'Street Map',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+  },
+  satellite: {
+    name: 'Satellite',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; <a href="https://www.arcgisonline.com/">Esri</a>, <a href="https://www.usgs.gov/">USGS</a>, <a href="https://www.nasa.gov/">NASA</a>'
+  },
+  satellite_labels: {
+    name: 'Satellite with Labels',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; <a href="https://www.arcgisonline.com/">Esri</a>, <a href="https://www.usgs.gov/">USGS</a>, <a href="https://www.nasa.gov/">NASA</a>'
+  },
+  terrain: {
+    name: 'Terrain',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; <a href="https://www.arcgisonline.com/">Esri</a>, <a href="https://www.usgs.gov/">USGS</a>'
+  },
+  dark: {
+    name: 'Dark Mode',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }
+};
+
 function MapViewComponent({
   events,
   language,
@@ -177,6 +206,8 @@ function MapViewComponent({
   const [overlayLocationName, setOverlayLocationName] = React.useState('');
   const [zoomTarget, setZoomTarget] = React.useState(null); // { lat, lng, zoom }
   const [showAboutModal, setShowAboutModal] = React.useState(false); // About/Credit modal
+  const [activeMapStyle, setActiveMapStyle] = React.useState('street'); // Map style selector
+  const [mobileMapStyleExpanded, setMobileMapStyleExpanded] = React.useState(false); // Mobile menu expansion
   
   // Refs for map persistence
   const defaultCenter = [20, 0];
@@ -486,8 +517,9 @@ function MapViewComponent({
     >
       <MapEventHandler />
       <TileLayer
-        attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution={TILE_LAYER_OPTIONS[activeMapStyle].attribution}
+        url={TILE_LAYER_OPTIONS[activeMapStyle].url}
+        key={activeMapStyle}
       />
       {polygonCoords && hoveredCluster && (
         <Polygon key={`poly-${hoveredCluster.latlng.lat}-${hoveredCluster.latlng.lng}`} positions={polygonCoords} pathOptions={{ color: polygonColor, weight: 2, fillOpacity: 0.1 }} />
@@ -518,6 +550,153 @@ function MapViewComponent({
         ))}
       </MarkerClusterGroup>
       </MapContainer>
+      
+      {/* Map Style Selector - Responsive */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        left: '10px',
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        overflow: mobileMapStyleExpanded ? 'visible' : 'hidden',
+        zIndex: 500,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        transition: 'all 0.3s ease'
+      }}>
+        {/* Icon buttons for mobile / full buttons for desktop */}
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobilePortrait ? 'row' : 'column',
+          gap: '0',
+          flexWrap: isMobilePortrait ? 'wrap' : 'nowrap'
+        }}>
+          {Object.entries(TILE_LAYER_OPTIONS).map(([key, option]) => {
+            const icons = {
+              street: '🗺️',
+              satellite: '🛰️',
+              satellite_labels: '🛰️📍',
+              terrain: '🏔️',
+              dark: '🌙'
+            };
+            
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  setActiveMapStyle(key);
+                  if (isMobilePortrait) {
+                    setMobileMapStyleExpanded(false);
+                  }
+                }}
+                title={option.name}
+                style={{
+                  padding: isMobilePortrait ? '10px' : '8px 12px',
+                  border: 'none',
+                  backgroundColor: activeMapStyle === key ? '#3b82f6' : '#f9fafb',
+                  color: activeMapStyle === key ? 'white' : '#374151',
+                  cursor: 'pointer',
+                  fontSize: isMobilePortrait ? '16px' : '13px',
+                  textAlign: 'center',
+                  transition: 'all 0.2s ease',
+                  borderLeft: !isMobilePortrait && activeMapStyle === key ? '3px solid #1e40af' : 'none',
+                  borderTop: isMobilePortrait && activeMapStyle === key ? '2px solid #1e40af' : 'none',
+                  fontWeight: activeMapStyle === key ? '600' : '500',
+                  paddingLeft: !isMobilePortrait ? '10px' : undefined,
+                  width: isMobilePortrait ? '50px' : 'auto',
+                  whiteSpace: 'nowrap',
+                  display: isMobilePortrait && !mobileMapStyleExpanded ? 'inline-flex' : 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={(e) => {
+                  if (!isMobilePortrait && activeMapStyle !== key) {
+                    e.target.style.backgroundColor = '#f3f4f6';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isMobilePortrait && activeMapStyle !== key) {
+                    e.target.style.backgroundColor = '#f9fafb';
+                  }
+                }}
+              >
+                <span>{icons[key]}</span>
+                {!isMobilePortrait && <span style={{ marginLeft: '6px' }}>{option.name}</span>}
+              </button>
+            );
+          })}
+          
+          {/* Mobile expand/collapse button - on top row */}
+          {isMobilePortrait && (
+            <button
+              onClick={() => setMobileMapStyleExpanded(!mobileMapStyleExpanded)}
+              style={{
+                width: '50px',
+                padding: '10px',
+                border: 'none',
+                backgroundColor: mobileMapStyleExpanded ? '#e5e7eb' : '#f9fafb',
+                color: '#374151',
+                cursor: 'pointer',
+                fontSize: '16px',
+                transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Expand map styles"
+            >
+              {mobileMapStyleExpanded ? '✕' : '⋮'}
+            </button>
+          )}
+        </div>
+        
+        {/* Expanded text menu for mobile */}
+        {isMobilePortrait && mobileMapStyleExpanded && (
+          <div style={{
+            borderTop: '1px solid #e5e7eb',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0'
+          }}>
+            {Object.entries(TILE_LAYER_OPTIONS).map(([key, option]) => {
+              const icons = {
+                street: '🗺️',
+                satellite: '🛰️',
+                satellite_labels: '🛰️📍',
+                terrain: '🏔️',
+                dark: '🌙'
+              };
+              
+              return (
+                <div key={key} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 12px',
+                  borderBottom: '1px solid #e5e7eb',
+                  backgroundColor: activeMapStyle === key ? '#eff6ff' : '#fff',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={() => {
+                  setActiveMapStyle(key);
+                  setMobileMapStyleExpanded(false);
+                }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '10px' }}>{icons[key]}</span>
+                  <span style={{
+                    flex: 1,
+                    fontSize: '13px',
+                    color: activeMapStyle === key ? '#3b82f6' : '#374151',
+                    fontWeight: activeMapStyle === key ? '600' : '500'
+                  }}>{option.name}</span>
+                  {activeMapStyle === key && <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>✓</span>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      
       {hoveredCluster && (
         <div
           onMouseEnter={() => {
