@@ -1,14 +1,12 @@
 // Example data for prototype. Add more events as needed.
 export const BIBLICAL_EVENTS = [
   {
-    startYear: -2000,
-    endYear: -1900,
+    year: -2000,
     name_en: "Abraham's Journey",
     name_te: "అబ్రాహాము ప్రయాణం",
-    "lat": 31.7683,
-    "lon": 35.2137,
-    "desc_en": "Abraham travels from Ur to Canaan.",
-    "desc_te": "అబ్రాహాము ఊరులో నుండి కనాను వరకు ప్రయాణించాడు."
+    location: { lat: 31.7683, lng: 35.2137 },
+    desc_en: "Abraham travels from Ur to Canaan.",
+    desc_te: "అబ్రాహాము ఊరులో నుండి కనాను వరకు ప్రయాణించాడు."
   },
   {
     startYear: -1500,
@@ -24,8 +22,7 @@ export const BIBLICAL_EVENTS = [
 
 export const WORLD_EVENTS = [
   {
-    startYear: -2500,
-    endYear: -2400,
+    year: -2500,
     name_en: "Great Pyramid Built",
     name_te: "మహా పిరమిడ్ నిర్మాణం",
     "lat": 29.9792,

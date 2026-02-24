@@ -130,7 +130,7 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
 
   const handleMouseOver = () => {
     if (mapRef?.current) {
-      const containerPoint = mapRef.current.latLngToContainerPoint([event.lat, event.lon]);
+      const containerPoint = mapRef.current.latLngToContainerPoint([event.location.lat, event.location.lng]);
       onMarkerHover({
         event,
         position: { x: containerPoint.x + 50, y: containerPoint.y }
@@ -145,7 +145,7 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
   return (
     <Marker
       ref={markerRef}
-      position={[event.lat, event.lon]}
+      position={[event.location.lat, event.location.lng]}
       icon={getMarkerIcon(event.type)}
       options={{ eventData: event, eventType: event.type }}
       eventHandlers={{
@@ -156,7 +156,7 @@ const EventMarker = React.memo(({ event, language, onMarkerHover, onMarkerClick,
       <Popup>
         <div className="event-title">{language === "en" ? event.name_en : event.name_te}</div>
         <div className="event-desc">{language === "en" ? event.desc_en : event.desc_te}</div>
-        <div className="event-year">{event.startYear < 0 ? `${Math.abs(event.startYear)} BC` : `${event.startYear} AD`}</div>
+        <div className="event-year">{event.year < 0 ? `${Math.abs(event.year)} BC` : `${event.year} AD`}</div>
       </Popup>
     </Marker>
   );
@@ -403,7 +403,7 @@ function MapViewComponent({
         button.style.cursor = 'pointer';
         button.style.userSelect = 'none';
         if (isMobilePortrait) {
-          button.style.marginBottom = '35px';
+          button.style.marginBottom = '1px';
         }
         L.DomEvent.disableClickPropagation(button);
         L.DomEvent.on(button, 'click', (e) => {
@@ -419,8 +419,8 @@ function MapViewComponent({
       creditControl.onAdd = () => {
         const container = L.DomUtil.create('div', '');
         container.innerHTML = `
-          <div style="background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 10px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
-            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> <span style="color:#888;">Designed and developed by</span> <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">Jeevan Prabhath</span>
+          <div style="display: none; background-color: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 4px; font-size: 10px; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: all 0.2s ease;">
+            <span id="wt-credit-title" style="font-weight:bold; color:#222; cursor:pointer;">World Timeline</span> <span style="color:#888;">Designed and developed by</span> <span id="wt-credit-author" style="font-weight:bold; color:#4f46e5; cursor:pointer;">JP</span>
           </div>
         `;
         L.DomEvent.disableClickPropagation(container);
@@ -706,7 +706,7 @@ function MapViewComponent({
                 <span style={{ color: '#4f46e5', fontWeight: 600, cursor: 'pointer' }}
                   onClick={() => window.open('https://nivedh-cloud.github.io/jeevan-resume/', '_blank', 'noopener')}
                 >
-                  Jeevan Prabhath
+                  JP
                 </span>
               </div>
             </div>

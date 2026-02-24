@@ -14,7 +14,7 @@ export default function EventNotifications({ events = [], language = "en" }) {
 
   // Generate unique ID for event
   const getEventId = (event) => {
-    return `${event.type}-${event.startYear}-${event.endYear}-${event.name_en}`;
+    return `${event.type}-${event.year}-${event.name_en}`;
   };
 
   // Calculate bottom position based on stack index
@@ -37,9 +37,9 @@ export default function EventNotifications({ events = [], language = "en" }) {
     const hasNewEvents = Array.from(currentIds).some(id => !eventIds.has(id));
 
     if (hasNewEvents) {
-      // Sort events by startYear and take top N
+      // Sort events by year and take top N
       const sortedEvents = [...events]
-        .sort((a, b) => Number(a.startYear) - Number(b.startYear))
+        .sort((a, b) => Number(a.year) - Number(b.year))
         .slice(0, NOTIFICATION_CONFIG.MAX_EVENTS_DISPLAYED);
 
       // Create notification objects with unique IDs and timers
@@ -100,9 +100,7 @@ export default function EventNotifications({ events = [], language = "en" }) {
 
               <div className="notification-footer">
                 <span className="event-period">
-                  {notif.event.startYear === notif.event.endYear
-                    ? `${notif.event.startYear} ${notif.event.startYear >= 0 ? 'CE' : 'BCE'}`
-                    : `${notif.event.startYear} - ${notif.event.endYear} ${notif.event.endYear >= 0 ? 'CE' : 'BCE'}`}
+                  {`${notif.event.year} ${notif.event.year >= 0 ? 'CE' : 'BCE'}`}
                 </span>
               </div>
             </div>

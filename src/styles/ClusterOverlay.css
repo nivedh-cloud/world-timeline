@@ -130,19 +130,20 @@
   }
 }
 
-/* Leaflet Top Controls - Zoom buttons at top */
+/* Leaflet Top Controls - Zoom buttons moved to BOTTOM */
 .leaflet-top.leaflet-left {
-  top: 16px !important;
+  top: auto !important;
+  bottom: 150px !important;
   left: 16px !important;
   z-index: 10001 !important;
 }
 
 /* Leaflet Credit Control - Keep at bottom of map above year picker */
 .leaflet-bottom.leaflet-left {
-  bottom: 30px !important;
+  bottom: 100px !important;
   left: 1px !important;
   right: auto !important;
-  z-index: 998 !important;
+  z-index: 10001 !important;
 }
 
 /* Ensure Leaflet controls are visible above all overlays */

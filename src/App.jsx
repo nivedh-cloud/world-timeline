@@ -38,7 +38,7 @@ export default function App() {
 
   useEffect(() => {
     fetchCountRef.current++;
-    console.log(`%c=== FETCH #${fetchCountRef.current} === Year: ${currentYear}`, 'background: red; color: white; font-size: 14px; font-weight: bold;');
+    console.log(`%c=== YEAR SELECTED: ${currentYear} ===`, 'background: #ff6b6b; color: white; font-size: 14px; font-weight: bold;');
     
     // Determine the selected range (slider window)
     const SLIDER_STEP = 10; // Changed to 10-year intervals
@@ -54,60 +54,55 @@ export default function App() {
     const bibleUrl = `${import.meta.env.BASE_URL}assets/Bible/${found.start}To${found.end}-BibleEvents.json`;
     const worldUrl = `${import.meta.env.BASE_URL}assets/World/${found.start}To${found.end}-WorldEvents.json`;
     setLoading(true);
-    console.log(`Fetch #${fetchCountRef.current}: Bible from ${found.start}To${found.end}-BibleEvents.json`);
-    console.log(`Fetch #${fetchCountRef.current}: World from ${found.start}To${found.end}-WorldEvents.json`);
+    console.log(`%c📖 LOADING BIBLE FILE: ${found.start}To${found.end}-BibleEvents.json`, 'color: #7c3aed; font-weight: bold;');
+    console.log(`%c🌍 LOADING WORLD FILE: ${found.start}To${found.end}-WorldEvents.json`, 'color: #ff8800; font-weight: bold;');
     Promise.all([
       (() => {
-        console.log(`Fetching Bible events file: ${bibleUrl}`);
+        console.log(`  → Fetching: ${bibleUrl}`);
         return fetch(bibleUrl)
           .then(res => {
             if (!res.ok) {
-              console.warn(`File not found: ${bibleUrl}`);
+              console.warn(`  ✗ Bible file NOT FOUND: ${bibleUrl}`);
               return [];
             }
             return res.json().catch(e => {
-              console.warn(`Invalid JSON in: ${bibleUrl}`);
+              console.warn(`  ✗ Invalid JSON in Bible file:`, e);
               return [];
             });
           })
           .catch(e => {
-            console.warn(`Fetch error for: ${bibleUrl}`);
+            console.warn(`  ✗ Bible fetch error:`, e);
             return [];
           });
       })(),
       (() => {
-        console.log(`Fetching World events file: ${worldUrl}`);
+        console.log(`  → Fetching: ${worldUrl}`);
         return fetch(worldUrl)
           .then(res => {
             if (!res.ok) {
-              console.warn(`File not found: ${worldUrl}`);
+              console.warn(`  ✗ World file NOT FOUND: ${worldUrl}`);
               return [];
             }
             return res.json().catch(e => {
-              console.warn(`Invalid JSON in: ${worldUrl}`);
+              console.warn(`  ✗ Invalid JSON in World file:`, e);
               return [];
             });
           })
           .catch(e => {
-            console.warn(`Fetch error for: ${worldUrl}`);
+            console.warn(`  ✗ World fetch error:`, e);
             return [];
           });
       })()
     ]).then(([bible, world]) => {
-      console.log(`Loaded Bible events:`, bible);
-      console.log(`Loaded World events:`, world);
-      console.log(`Bible events count: ${bible.length}`);
-      console.log(`World events count: ${world.length}`);
+      console.log(`%c✓ FILES LOADED SUCCESSFULLY`, 'color: #22c55e; font-weight: bold;');
+      console.log(`  📖 Bible events: ${bible.length} events`);
+      console.log(`  🌍 World events: ${world.length} events`);
       // Filter events immediately after fetching, based on the actual selected slider range
       const minYear = Math.min(selectedRangeStart, selectedRangeEnd);
       const maxYear = Math.max(selectedRangeStart, selectedRangeEnd);
       const filterByRange = ev => {
-        const s = Number(ev.startYear);
-        const e = Number(ev.endYear);
-        if (s === e) {
-          return s >= minYear && s < maxYear;
-        }
-        return s < maxYear && e >= minYear;
+        const year = Number(ev.year);
+        return year >= minYear && year < maxYear;
       };
       const filteredBible = (bible || []).filter(filterByRange);
       const filteredWorld = (world || []).filter(filterByRange);
@@ -135,32 +130,23 @@ export default function App() {
     console.log('Filtering events for range:', rangeStart, 'to', rangeEnd);
     const minYear = Math.min(rangeStart, rangeEnd);
     const maxYear = Math.max(rangeStart, rangeEnd);
-    // Only include events that overlap the selected range (inclusive)
-    // For single-year events, treat startYear == endYear as a single point
+    // Only include events within the selected range
     const filterByRange = ev => {
-      const s = Number(ev.startYear);
-      const e = Number(ev.endYear);
-      // If event is a single year
-      if (s === e) {
-        const match = s >= minYear && s < maxYear;
-        console.log(`Event: ${ev.name_en || ev.name} (${s}) - match: ${match}`);
-        return match;
-      }
-      // For intervals, check for overlap (non-overlapping windows: [start, end))
-      const match = (s < maxYear && e >= minYear);
-      console.log(`Event: ${ev.name_en || ev.name} (${s} to ${e}) - match: ${match}`);
+      const year = Number(ev.year);
+      const match = year >= minYear && year < maxYear;
+      console.log(`Event: ${ev.name_en || ev.name} (${year}) - match: ${match}`);
       return match;
     };
     // Combine all events regardless of type
     events = events.concat(
       eventData.BIBLICAL_EVENTS
         .filter(filterByRange)
-        .map((ev, idx) => ({ ...ev, type: "biblical", key: `b-${ev.name_en}-${ev.startYear}-${idx}` }))
+        .map((ev, idx) => ({ ...ev, type: "biblical", key: `b-${ev.name_en}-${ev.year}-${idx}` }))
     );
     events = events.concat(
       eventData.WORLD_EVENTS
         .filter(filterByRange)
-        .map((ev, idx) => ({ ...ev, type: "world", key: `w-${ev.name_en}-${ev.startYear}-${idx}` }))
+        .map((ev, idx) => ({ ...ev, type: "world", key: `w-${ev.name_en}-${ev.year}-${idx}` }))
     );
     return events;
   }, [rangeStart, rangeEnd, eventData]);

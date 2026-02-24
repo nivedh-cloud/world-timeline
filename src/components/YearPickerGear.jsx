@@ -29,7 +29,12 @@ export default function YearPickerGear({ currentYear, onYearChange }) {
   const years = React.useMemo(() => {
     const result = [];
     for (let y = SLIDER_MIN; y <= SLIDER_MAX; y += PICKER_STEP) {
-      result.push(y);
+      // Skip 0 and add 1 instead
+      if (y === 0) {
+        result.push(1);
+      } else {
+        result.push(y);
+      }
     }
     return result;
   }, [SLIDER_MIN, SLIDER_MAX, PICKER_STEP]);

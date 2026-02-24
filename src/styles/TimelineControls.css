@@ -34,9 +34,9 @@
 /* Language Toggle Button */
 .lang-toggle {
   position: fixed;
-  bottom: 50px;
-  right: 50px;
-  padding: 8px 16px;
+  bottom: 260px;
+  left: 16px;
+  padding: 8px 14px;
   background: #0078ff;
   color: white;
   border: none;
@@ -45,7 +45,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 14px;
-  z-index: 9998;
+  z-index: 10002;
   pointer-events: auto;
 }
 
@@ -220,9 +220,14 @@
   }
 
   .lang-toggle {
-    align-self: flex-end;
-    padding: 6px 12px;
-    font-size: 12px;
+    position: fixed !important;
+    bottom: 180px !important;
+    left: 16px !important;
+    align-self: auto !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    width: auto !important;
+    max-width: 60px !important;
   }
 
   .year-slider::-webkit-slider-thumb {
@@ -234,4 +239,5 @@
     width: 16px;
     height: 16px;
   }
+
 }
